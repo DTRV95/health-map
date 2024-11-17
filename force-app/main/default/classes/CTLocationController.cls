@@ -13,7 +13,7 @@ public with sharing class CTLocationController {
                 WHERE Name LIKE :searchTerm 
                     OR Pincode__c LIKE :searchTerm 
                     OR Address__c LIKE :searchTerm
-                ORDER BY Status_Update_Date__c DESC NULLS LAST]
+                ORDER BY Status_Update_Date__c DESC NULLS LAST];
     }
 
     public static Location__c getLocationById(String locationId){
@@ -25,4 +25,13 @@ public with sharing class CTLocationController {
         }
         return null;
     }
-}   
+
+    public static Map<String, Integer> getStatusCount(){
+        Map<String, Integer> healthCountMap = new Map<String, Integer>();
+        for(AggregateResult ar: [SELECT Status__c, COUNT(Id) total 
+                                    FROM Location__c GROUP BY Status__c]){
+        healthCountMap.put(String.valueof(ar.get('Status__c')), Integer.valueof(ar.get('total')));
+        }
+        return healthCountMap;
+    }
+}  
